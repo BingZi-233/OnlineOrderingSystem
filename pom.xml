@@ -16,6 +16,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>UserModule</module>
+        <module>AdminModule</module>
     </modules>
 
     <properties>
