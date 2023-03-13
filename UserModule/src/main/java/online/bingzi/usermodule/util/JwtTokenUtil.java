@@ -12,15 +12,20 @@ import java.util.Map;
 @Component
 public class JwtTokenUtil {
     // Token前缀
-    public static final String TOKEN_PREFIX = "Bearer ";
+    private static final String TOKEN_PREFIX = "Bearer ";
     // 认证头
-    public static final String HEADER_STRING = "Authorization";
+    private static final String HEADER_STRING = "Authorization";
     // 盐
     private static final String SECRET = "yD8hQ0gK8aR6iO0eR3fY0mJ3pF6oJ2zHsL3oU7xD5xL5tB1vL0qP9tL8jB2fX8vSoZ2oQ4bI3gK7zE1nJ9mS7fW4vI7lQ0qJ";
     // 过期时间
     private static final long EXPIRATION_TIME = 864_000_000;
 
-    // 创建一个JWT Token
+    /**
+     * 创建一个JWT Token
+     *
+     * @param userDetails 用户详细信息
+     * @return Token
+     */
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder()
@@ -32,7 +37,12 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    // 从JWT Token中获取用户名
+    /**
+     * 从JWT Token中获取用户名
+     *
+     * @param token Token
+     * @return 用户名
+     */
     public String getUsernameFromToken(String token) {
         return Jwts
                 .parser()
@@ -42,13 +52,24 @@ public class JwtTokenUtil {
                 .getSubject();
     }
 
-    // 校验 Token 是否有效
+    /**
+     * 校验 Token 是否有效
+     *
+     * @param token       Token
+     * @param userDetails 用户详细信息
+     * @return 是否有效
+     */
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-    // 检查 Token 是否过期
+    /**
+     * 检查 Token 是否过期
+     *
+     * @param token Token
+     * @return 是否过期
+     */
     private boolean isTokenExpired(String token) {
         final Date expiration = Jwts
                 .parser()
