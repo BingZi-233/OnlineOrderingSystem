@@ -8,7 +8,6 @@ import online.bingzi.usermodule.subModule.userModule.entity.User;
 import online.bingzi.usermodule.subModule.userModule.repository.UserRepository;
 import online.bingzi.usermodule.subModule.userModule.service.UserService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -16,9 +15,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    @Transactional
     public ResultModel<Object> register(User user) {
-        userRepository.save(user);
-        return ResultModelBuilder.build(ResponseType.SUCCESS);
+        try {
+            // 因为数据库侧已经做了用户名，邮箱，手机号唯一性校验，所以这里不需要再做了
+            userRepository.save(user);
+            return ResultModelBuilder.build(ResponseType.SUCCESS);
+        } catch (Exception e) {
+            return ResultModelBuilder.build(ResponseType.PARAM_ERROR);
+        }
     }
 }
