@@ -11,4 +11,8 @@ public interface CommonService {
     ResultModel<Map<String, Dictionary>> getDropBox(RequestContainer<ArrayList<String>> container);
 
     ResultModel<Object> insertDropBox(Dictionary dictionary);
+
+    ResultModel<Object> updateDropBox(Dictionary dictionary);
+
+    ResultModel<Object> deleteDropBox(Dictionary dictionary);
 }

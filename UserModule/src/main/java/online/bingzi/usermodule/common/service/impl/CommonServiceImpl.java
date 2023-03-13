@@ -36,19 +36,50 @@ public class CommonServiceImpl implements CommonService {
     @Override
     @Transactional
     public ResultModel<Object> insertDropBox(Dictionary dictionary) {
-        // 如果不是顶级
         if (Boolean.FALSE.equals(dictionary.getParent())) {
             Optional<Dictionary> optional = dictionaryRepository.findById(dictionary.getParentId().getId());
-            optional.ifPresent(
-                    it -> {
-                        it.getChildren().add(dictionary);
-                        dictionaryRepository.save(it);
-                    }
-            );
-
+            if (optional.isPresent()) {
+                optional.ifPresent(it -> {
+                    it.getChildren().add(dictionary);
+                    dictionaryRepository.save(it);
+                });
+            } else {
+                return ResultModelBuilder.build(ResponseType.PARAM_ERROR, "父级不存在");
+            }
+        } else {
+            dictionaryRepository.save(dictionary);
         }
-        // 保存数据到数据库
-        dictionaryRepository.save(dictionary);
+        return ResultModelBuilder.build(ResponseType.SUCCESS);
+    }
+
+    @Override
+    @Transactional
+    public ResultModel<Object> updateDropBox(Dictionary dictionary) {
+        Optional<Dictionary> optional = dictionaryRepository.findById(dictionary.getId());
+        if (optional.isPresent()) {
+            optional.ifPresent(it -> {
+                it.setName(dictionary.getName());
+                dictionaryRepository.save(it);
+            });
+        } else {
+            return ResultModelBuilder.build(ResponseType.PARAM_ERROR, "字典不存在");
+        }
+        return ResultModelBuilder.build(ResponseType.SUCCESS);
+    }
+
+    @Override
+    public ResultModel<Object> deleteDropBox(Dictionary dictionary) {
+        Optional<Dictionary> optional = dictionaryRepository.findById(dictionary.getId());
+        if (optional.isPresent()) {
+            optional.ifPresent(it -> {
+                // 先删除子级
+                dictionaryRepository.deleteAllById(it.getChildren().stream().map(Dictionary::getId).collect(Collectors.toList()));
+                // 删除自己
+                dictionaryRepository.delete(it);
+            });
+        } else {
+            return ResultModelBuilder.build(ResponseType.PARAM_ERROR, "字典不存在");
+        }
         return ResultModelBuilder.build(ResponseType.SUCCESS);
     }
 }

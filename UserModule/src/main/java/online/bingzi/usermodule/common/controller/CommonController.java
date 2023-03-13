@@ -5,16 +5,15 @@ import online.bingzi.usermodule.common.entity.Dictionary;
 import online.bingzi.usermodule.common.entity.RequestContainer;
 import online.bingzi.usermodule.common.entity.ResultModel;
 import online.bingzi.usermodule.common.entity.type.ResponseType;
+import online.bingzi.usermodule.common.entity.validated.Delete;
 import online.bingzi.usermodule.common.entity.validated.Insert;
 import online.bingzi.usermodule.common.entity.validated.Select;
+import online.bingzi.usermodule.common.entity.validated.Update;
 import online.bingzi.usermodule.common.service.CommonService;
 import online.bingzi.usermodule.common.util.ResultModelBuilder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -42,5 +41,20 @@ public class CommonController {
         return commonService.insertDropBox(dictionary);
     }
 
+    @PutMapping("updateDropBox")
+    public ResultModel<Object> updateDropBox(@Validated(Update.class) Dictionary dictionary, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResultModelBuilder.build(ResponseType.PARAM_ERROR, Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+        }
+        return commonService.updateDropBox(dictionary);
+    }
+
+    @DeleteMapping("deleteDropBox")
+    public ResultModel<Object> deleteDropBox(@Validated(Delete.class) Dictionary dictionary, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResultModelBuilder.build(ResponseType.PARAM_ERROR, Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+        }
+        return commonService.deleteDropBox(dictionary);
+    }
 
 }
